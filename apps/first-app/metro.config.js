@@ -1,22 +1,24 @@
+const { getDefaultConfig } = require('@expo/metro-config');
 const { createMetroConfiguration } = require('expo-yarn-workspaces')
 
-const defaultSourceExts = ['ts', 'tsx', 'js', 'jsx', 'json', 'wasm']
-
 module.exports = (() => {
-  const cfg = createMetroConfiguration(__dirname)
-
+  const defaultConfig = getDefaultConfig(__dirname);
+  const workspacesConfig = createMetroConfiguration(__dirname)
   const {
-    resolver: { sourceExts = defaultSourceExts, assetExts },
-  } = cfg
+    resolver: { sourceExts, assetExts },
+  } = defaultConfig
 
   return {
-    ...cfg,
+    ...defaultConfig,
+    ...workspacesConfig,
     transformer: {
-      ...cfg.transformer,
+      ...defaultConfig.transformer,
+      ...workspacesConfig.transformer,
       babelTransformerPath: require.resolve('react-native-svg-transformer'),
     },
     resolver: {
-      ...cfg.resolver,
+      ...defaultConfig.resolver,
+      ...workspacesConfig.resolver,
       assetExts: assetExts.filter((ext) => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg'],
     },
